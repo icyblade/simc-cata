@@ -1,6 +1,6 @@
 TEMPLATE = app
 TARGET = SimulationCraft
-QT += core gui network webkit
+QT += core gui network webengine webenginewidgets widgets
 #CONFIG += paperdoll
 #CONFIG += openssl
 

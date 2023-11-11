@@ -8,7 +8,8 @@
 
 #include "simulationcraft.h"
 #include <QtGui/QtGui>
-#include <QtWebKit>
+#include <QtWebView/QtWebView>
+#include <QtWebEngineWidgets/QtWebEngineWidgets>
 
 #define TAB_WELCOME   0
 #define TAB_OPTIONS   1
@@ -309,7 +310,7 @@ public:
   SimulationCraftCommandLine( SimulationCraftWindow* mw ) : mainWindow( mw ) {}
 };
 
-class SimulationCraftWebView : public QWebView
+class SimulationCraftWebView : public QWebEngineView
 {
   Q_OBJECT
 
@@ -357,7 +358,6 @@ public:
     connect( this, SIGNAL( urlChanged( const QUrl& ) ), this, SLOT( urlChangedSlot( const QUrl& ) ) );
 
     connect( page(), SIGNAL( linkClicked( const QUrl& ) ), this, SLOT( linkClickedSlot( const QUrl& ) ) );
-    page() -> setLinkDelegationPolicy( QWebPage::DelegateExternalLinks );
   }
   virtual ~SimulationCraftWebView() {}
 };

@@ -192,12 +192,6 @@
     <ClCompile Include="engine\sc_xml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="release\moc_simulationcraftqt.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="debug\moc_simulationcraftqt.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
     <ClCompile Include="engine\sc_bcp_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -281,8 +275,8 @@
     </CustomBuildStep>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="qt\simulationcraftqt.h">
+    <QtMoc Include="qt\simulationcraftqt.h">
       <Filter>Header Files</Filter>
-    </CustomBuild>
+    </QtMoc>
   </ItemGroup>
 </Project>

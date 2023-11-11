@@ -7,7 +7,9 @@
 #ifdef SC_PAPERDOLL
 #include "simcpaperdoll.h"
 #endif
-#include <QtWebKit>
+#include <Qt>
+#include <QtWebView/QtWebView>
+#include <QtWebEngineWidgets/QtWebEngineWidgets>
 #ifdef Q_WS_MAC
 #include <CoreFoundation/CoreFoundation.h>
 #endif
@@ -531,7 +533,7 @@ void SimulationCraftWindow::createCmdLine()
   cmdLineLayout->addWidget( mainButton = new QPushButton( "Simulate!" ) );
   backButton->setMaximumWidth( 30 );
   forwardButton->setMaximumWidth( 30 );
-  progressBar->setStyle( new QPlastiqueStyle() );
+  progressBar->setStyle( QStyleFactory::create( "fusion" ) );
   progressBar->setMaximum( 100 );
   progressBar->setMaximumWidth( 200 );
   progressBar->setMinimumWidth( 150 );
@@ -563,7 +565,7 @@ void SimulationCraftWindow::createWelcomeTab()
 #endif
   QString url = "file:///" + welcomeFile;
 
-  QWebView* welcomeBanner = new QWebView();
+  QWebEngineView* welcomeBanner = new QWebEngineView();
   welcomeBanner->setUrl( url );
   mainTab->addTab( welcomeBanner, "Welcome" );
 }
@@ -764,7 +766,6 @@ void SimulationCraftWindow::createImportTab()
   charDevCookies = new PersistentCookieJar( "chardev.cookies" );
   charDevCookies->load();
   charDevView = new SimulationCraftWebView( this );
-  charDevView->page()->networkAccessManager()->setCookieJar( charDevCookies );
   charDevView->setUrl( QUrl( "http://chardev.org/?planner" ) );
   importTab->addTab( charDevView, "CharDev" );
 
@@ -934,12 +935,12 @@ void SimulationCraftWindow::createCustomTab()
   customGlyphsTab = new QWidget();
   customGlyphsTab->setObjectName( QString::fromUtf8( "customGlyphsTab" ) );
   createCustomProfileDock->addTab( customGlyphsTab, QString() );
-  createCustomProfileDock->setTabText( createCustomProfileDock->indexOf( customGearTab ), QApplication::translate( "createCustomTab", "Gear", 0, QApplication::UnicodeUTF8 ) );
-  createCustomProfileDock->setTabToolTip( createCustomProfileDock->indexOf( customGearTab ), QApplication::translate( "createCustomTab", "Customise Gear Setup", 0, QApplication::UnicodeUTF8 ) );
-  createCustomProfileDock->setTabText( createCustomProfileDock->indexOf( customTalentsTab ), QApplication::translate( "createCustomTab", "Talents", 0, QApplication::UnicodeUTF8 ) );
-  createCustomProfileDock->setTabToolTip( createCustomProfileDock->indexOf( customTalentsTab ), QApplication::translate( "createCustomTab", "Customise Talents", 0, QApplication::UnicodeUTF8 ) );
-  createCustomProfileDock->setTabText( createCustomProfileDock->indexOf( customGlyphsTab ), QApplication::translate( "createCustomTab", "Glyphs", 0, QApplication::UnicodeUTF8 ) );
-  createCustomProfileDock->setTabToolTip( createCustomProfileDock->indexOf( customGlyphsTab ), QApplication::translate( "createCustomTab", "Customise Glyphs", 0, QApplication::UnicodeUTF8 ) );
+  createCustomProfileDock->setTabText( createCustomProfileDock->indexOf( customGearTab ), QApplication::translate( "createCustomTab", "Gear", 0 ) );
+  createCustomProfileDock->setTabToolTip( createCustomProfileDock->indexOf( customGearTab ), QApplication::translate( "createCustomTab", "Customise Gear Setup", 0 ) );
+  createCustomProfileDock->setTabText( createCustomProfileDock->indexOf( customTalentsTab ), QApplication::translate( "createCustomTab", "Talents", 0 ) );
+  createCustomProfileDock->setTabToolTip( createCustomProfileDock->indexOf( customTalentsTab ), QApplication::translate( "createCustomTab", "Customise Talents", 0 ) );
+  createCustomProfileDock->setTabText( createCustomProfileDock->indexOf( customGlyphsTab ), QApplication::translate( "createCustomTab", "Glyphs", 0 ) );
+  createCustomProfileDock->setTabToolTip( createCustomProfileDock->indexOf( customGlyphsTab ), QApplication::translate( "createCustomTab", "Customise Glyphs", 0 ) );
 }
 
 void SimulationCraftWindow::createSimulateTab()
@@ -1233,7 +1234,7 @@ void ImportThread::importBattleNet()
 
   if ( false )
   {
-    QStringList tokens = url.split( QRegExp( "[?&=:/.]" ), QString::SkipEmptyParts );
+    QStringList tokens = url.split( QRegExp( "[?&=:/.]" ), Qt::SkipEmptyParts );
     int count = tokens.count();
     for ( int i=0; i < count-1; i++ )
     {
@@ -1393,14 +1394,14 @@ void SimulateThread::run()
   QFile file( "simc_gui.simc" );
   if ( file.open( QIODevice::WriteOnly ) )
   {
-    file.write( options.toAscii() );
+    file.write( options.toUtf8() );
     file.close();
   }
 
   sim -> html_file_str = "simc_report.html";
   sim -> xml_file_str  = "simc_report.xml";
 
-  QStringList stringList = options.split( '\n', QString::SkipEmptyParts );
+  QStringList stringList = options.split( '\n', Qt::SkipEmptyParts );
 
   int argc = stringList.count() + 1;
   char** argv = new char*[ argc ];
@@ -1651,7 +1652,7 @@ void SimulationCraftWindow::saveLog()
 
   if ( file.open( QIODevice::WriteOnly ) )
   {
-    file.write( logText->toPlainText().toAscii() );
+    file.write( logText->toPlainText().toUtf8());
     file.close();
   }
 
@@ -1671,7 +1672,7 @@ void SimulationCraftWindow::saveResults()
 
   if ( file.open( QIODevice::WriteOnly ) )
   {
-    file.write( resultsHtml[ index-1 ].toAscii() );
+    file.write( resultsHtml[ index-1 ].toUtf8() );
     file.close();
   }
 
@@ -1762,11 +1763,7 @@ void SimulationCraftWindow::backButtonClicked( bool /* checked */ )
     if ( mainTab->currentIndex() == TAB_RESULTS && ! visibleWebView->history()->canGoBack() )
     {
       visibleWebView->setHtml( resultsHtml[ resultsTab->indexOf( visibleWebView ) - 1 ] );
-
-      QWebHistory* h = visibleWebView->history();
       visibleWebView->history()->clear(); // This is not appearing to work.
-      h->setMaximumItemCount( 0 );
-      h->setMaximumItemCount( 100 );
     }
     else
     {
@@ -1926,12 +1923,12 @@ void SimulationCraftWindow::historyDoubleClicked( QListWidgetItem* item )
   if ( url.count( "battle.net"    ) ||
        url.count( "wowarmory.com" ) )
   {
-    battleNetView->setUrl( QUrl::fromEncoded( url.toAscii() ) );
+    battleNetView->setUrl( QUrl::fromEncoded( url.toUtf8() ) );
     importTab->setCurrentIndex( TAB_BATTLE_NET );
   }
   else if ( url.count( "chardev.org" ) )
   {
-    charDevView->setUrl( QUrl::fromEncoded( url.toAscii() ) );
+    charDevView->setUrl( QUrl::fromEncoded( url.toUtf8() ) );
     importTab->setCurrentIndex( TAB_CHAR_DEV );
   }
   else

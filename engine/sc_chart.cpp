@@ -144,23 +144,8 @@ static const char* chart_resource_type_string( int type )
 
 static const char* get_chart_base_url()
 {
-  static int round_robin = -1;
-  static const char* base_urls[] =
-  {
-    "http://0.chart.apis.google.com/chart?",
-    "http://1.chart.apis.google.com/chart?",
-    "http://2.chart.apis.google.com/chart?",
-    "http://3.chart.apis.google.com/chart?",
-    "http://4.chart.apis.google.com/chart?",
-    "http://5.chart.apis.google.com/chart?",
-    "http://6.chart.apis.google.com/chart?",
-    "http://7.chart.apis.google.com/chart?",
-    "http://8.chart.apis.google.com/chart?",
-    "http://9.chart.apis.google.com/chart?",
-  };
-  round_robin = ( round_robin + 1 ) % sizeof_array( base_urls );
-
-  return base_urls[ round_robin ];
+  static const char* base_url = "https://chart.apis.google.com/chart?";
+  return base_url;
 }
 
 #if 0
