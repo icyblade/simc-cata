@@ -24,11 +24,7 @@
 #  define SC_X64
 #endif
 
-#if defined( _MSC_VER )
-#  include "../vs/stdint.h"
-#else
-#  include <stdint.h>
-#endif
+#include <stdint.h>
 
 #include <algorithm>
 #include <cassert>
@@ -2315,7 +2311,7 @@ struct talent_translation_t
 
 // Utilities ================================================================
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER < 1900
 // C99-compliant snprintf - MSVC _snprintf is NOT the same.
 
 #undef vsnprintf

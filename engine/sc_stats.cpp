@@ -253,7 +253,11 @@ void stats_t::analyze()
     apr  = ( resource_consumed > 0 ) ? ( compound_amount / resource_consumed ) : 0;
   }
   else
+  {
+    overkill_pct = 0;
     total_time = total_execute_time + ( channeled ? total_tick_time : timespan_t::zero );
+  }
+
 
   ttpt = num_ticks ? total_tick_time.total_seconds() / num_ticks : 0;
   etpe = num_executes? ( total_execute_time.total_seconds() + ( channeled ? total_tick_time.total_seconds() : 0 ) ) / num_executes : 0;
